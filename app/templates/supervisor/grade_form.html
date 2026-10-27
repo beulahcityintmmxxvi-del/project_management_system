@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('supervisor.project_detail', project_id=project.id) }}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to Project
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Record Grade</div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <select name="student_id" class="form-select" onchange="location.href='?student_id='+this.value">
+                            {% for m in members %}
+                            <option value="{{ m.id }}" {% if student_id == m.id %}selected{% endif %}>{{ m.full_name }} ({{ m.matric_number }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Component *</label>
+                        {{ form.component(class="form-select") }}
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Score *</label>
+                            {{ form.score(class="form-control") }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Max Score</label>
+                            {{ form.max_score(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comments</label>
+                        {{ form.comments(class="form-control", rows=3) }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Grade</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Existing Grades</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Component</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for g in existing %}
+                        <tr>
+                            <td>{{ g.student.full_name if g.student else '—' }}</td>
+                            <td>{{ g.component }}</td>
+                            <td>{{ g.score }}/{{ g.max_score }} ({{ g.percentage() }}%)</td>
+                            <td>{{ g.graded_at.strftime('%d %b %Y') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">No grades recorded yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

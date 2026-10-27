@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('supervisor.project_detail', project_id=project.id) }}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to {{ project.title }}
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Add Milestone</div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        {{ form.title(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        {{ form.description(class="form-control", rows=3) }}
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Due Date</label>
+                            {{ form.due_date(class="form-control") }}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Weight</label>
+                            {{ form.weight(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        {{ form.status(class="form-select") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Add Milestone</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Existing Milestones</div>
+            <ul class="list-group list-group-flush">
+                {% for m in milestones %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ m.title }}</strong>
+                            {% if m.description %}<p class="small text-muted mb-0">{{ m.description }}</p>{% endif %}
+                            {% if m.due_date %}<small class="text-muted">Due: {{ m.due_date.strftime('%d %b %Y') }}</small>{% endif %}
+                        </div>
+                        <span class="badge bg-{% if m.status=='completed' %}success{% elif m.status=='overdue' %}danger{% else %}secondary{% endif %}">{{ m.status }}</span>
+                    </div>
+                </li>
+                {% else %}
+                <li class="list-group-item text-muted text-center py-4">No milestones yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

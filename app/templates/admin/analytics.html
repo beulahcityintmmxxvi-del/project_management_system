@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted mb-0">Predictive analytics powered by machine learning on project progress, reports, and feedback.</p>
+    <a href="{{ url_for('admin.run_predictions') }}" class="btn btn-primary" data-confirm="Run predictions for all active student projects?">
+        <i class="bi bi-cpu me-1"></i> Run Predictions
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary"><i class="bi bi-folder2"></i></div>
+            <div class="stat-value">{{ overview.total_projects }}</div>
+            <div class="stat-label">Total Projects</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-info"><i class="bi bi-mortarboard"></i></div>
+            <div class="stat-value">{{ overview.total_students }}</div>
+            <div class="stat-label">Students</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-success"><i class="bi bi-bar-chart"></i></div>
+            <div class="stat-value">{{ overview.avg_progress }}%</div>
+            <div class="stat-label">Avg Progress</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-danger"><i class="bi bi-exclamation-triangle"></i></div>
+            <div class="stat-value">{{ overview.high_risk_count }}</div>
+            <div class="stat-label">High Risk (recent)</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Risk Distribution</div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Department Performance (Predicted)</div>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Students</th>
+                            <th>Avg Predicted Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for d in department_stats %}
+                        <tr>
+                            <td>{{ d.department }}</td>
+                            <td>{{ d.students }}</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height:6px;">
+                                        <div class="progress-bar {% if d.avg_predicted >= 70 %}bg-success{% elif d.avg_predicted >= 50 %}bg-warning{% else %}bg-danger{% endif %}"
+                                             style="width:{{ d.avg_predicted }}%"></div>
+                                    </div>
+                                    <strong>{{ d.avg_predicted }}%</strong>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="text-center text-muted py-4">Run predictions to see department stats.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    createChart('riskChart', 'doughnut',
+        {{ risk_distribution.labels | tojson }},
+        {{ risk_distribution.data | tojson }},
+        {{ risk_distribution.colors | tojson }}
+    );
+});
+</script>
+{% endblock %}

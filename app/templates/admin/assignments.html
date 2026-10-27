@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header">Assign Student to Supervisor</div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        {{ form.student_id(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Supervisor</label>
+                        {{ form.supervisor_id(class="form-select") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-link-45deg me-1"></i> Assign
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if unassigned %}
+        <div class="card mt-3">
+            <div class="card-header text-warning">
+                <i class="bi bi-exclamation-triangle me-1"></i> Unassigned Students ({{ unassigned|length }})
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for s in unassigned %}
+                <li class="list-group-item small">
+                    {{ s.full_name }}
+                    <span class="text-muted">— {{ s.matric_number or s.email }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Current Assignments</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Matric</th>
+                            <th>Supervisor</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for s in assigned %}
+                        <tr>
+                            <td>{{ s.full_name }}</td>
+                            <td><code>{{ s.matric_number or '—' }}</code></td>
+                            <td>{{ s.assigned_supervisor.full_name if s.assigned_supervisor else '—' }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('admin.unassign_student', student_id=s.id) }}"
+                                      onsubmit="return confirm('Unassign this student?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Unassign</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">No assignments yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

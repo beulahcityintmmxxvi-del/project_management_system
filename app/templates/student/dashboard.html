@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary"><i class="bi bi-journal-bookmark"></i></div>
+            <div class="stat-value">{{ projects|length }}</div>
+            <div class="stat-label">My Projects</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning"><i class="bi bi-hourglass-split"></i></div>
+            <div class="stat-value">{{ pending }}</div>
+            <div class="stat-label">Pending Review</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-success"><i class="bi bi-check-circle"></i></div>
+            <div class="stat-value">{{ approved }}</div>
+            <div class="stat-label">Approved</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-info"><i class="bi bi-person-badge"></i></div>
+            <div class="stat-value" style="font-size:1rem;padding-top:.4rem;">
+                {{ supervisor.full_name if supervisor else 'Not assigned' }}
+            </div>
+            <div class="stat-label">My Supervisor</div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Recent Submissions</h5>
+    <a href="{{ url_for('student.submit_writeup') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-cloud-upload me-1"></i> Submit Write-up
+    </a>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in submissions %}
+                <tr>
+                    <td>{{ s.title }} <small class="text-muted">v{{ s.version }}</small></td>
+                    <td>{{ s.file_type|upper }}</td>
+                    <td><span class="badge bg-{{ s.status_badge() }}">{{ s.status.replace('_',' ') }}</span></td>
+                    <td>{{ s.submitted_at.strftime('%d %b %Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('student.submission_detail', submission_id=s.id) }}"
+                           class="btn btn-sm btn-outline-primary">View</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        No submissions yet.
+                        <a href="{{ url_for('student.submit_writeup') }}">Submit your first write-up</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

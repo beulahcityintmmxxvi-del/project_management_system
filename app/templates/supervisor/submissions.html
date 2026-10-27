@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <form class="d-flex gap-2" method="GET">
+        <select name="status" class="form-select" style="width:auto;" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
+            {% for s in ['pending','under_review','approved','revision_required','rejected'] %}
+            <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s.replace('_',' ')|title }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Student</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in submissions %}
+                <tr>
+                    <td>{{ s.title }} <small class="text-muted">v{{ s.version }}</small></td>
+                    <td>{{ s.student.full_name }}</td>
+                    <td>{{ s.file_type|upper }}</td>
+                    <td><span class="badge bg-{{ s.status_badge() }}">{{ s.status.replace('_',' ') }}</span></td>
+                    <td>{{ s.submitted_at.strftime('%d %b %Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('supervisor.submission_detail', submission_id=s.id) }}"
+                           class="btn btn-sm btn-primary">
+                            {% if s.status in ['pending','under_review'] %}Review{% else %}View{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No submissions found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

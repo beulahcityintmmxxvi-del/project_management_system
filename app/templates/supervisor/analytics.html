@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">Student Performance Predictions</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Project</th>
+                    <th>Predicted Score</th>
+                    <th>Risk</th>
+                    <th>Confidence</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in predictions %}
+                <tr>
+                    <td>{{ p.student.full_name if p.student else '—' }}</td>
+                    <td>{{ p.project.title[:40] if p.project else '—' }}{% if p.project and p.project.title|length > 40 %}…{% endif %}</td>
+                    <td><strong>{{ p.predicted_score }}%</strong></td>
+                    <td><span class="badge risk-{{ p.risk_level }}">{{ p.risk_level }}</span></td>
+                    <td>{{ (p.confidence * 100)|int }}%</td>
+                    <td>{{ p.created_at.strftime('%d %b %Y') }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No predictions available. Ask admin to run batch predictions.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

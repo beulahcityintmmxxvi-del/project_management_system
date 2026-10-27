@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="avatar mx-auto mb-3" style="width:72px;height:72px;font-size:1.75rem;border-radius:16px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">
+                        {{ current_user.full_name[0] }}
+                    </div>
+                    <h4 class="mb-0">{{ current_user.full_name }}</h4>
+                    <span class="badge bg-primary">{{ current_user.role|title }}</span>
+                </div>
+                <table class="table table-borderless">
+                    <tr>
+                        <th class="text-muted" style="width:40%">Email</th>
+                        <td>{{ current_user.email }}</td>
+                    </tr>
+                    {% if current_user.matric_number %}
+                    <tr>
+                        <th class="text-muted">Matric Number</th>
+                        <td><code>{{ current_user.matric_number }}</code></td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <th class="text-muted">Department</th>
+                        <td>{{ current_user.department or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Phone</th>
+                        <td>{{ current_user.phone or '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Last Login</th>
+                        <td>{{ current_user.last_login.strftime('%d %b %Y %H:%M') if current_user.last_login else '—' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Member Since</th>
+                        <td>{{ current_user.created_at.strftime('%d %b %Y') }}</td>
+                    </tr>
+                </table>
+                <div class="text-center mt-3">
+                    <a href="{{ url_for('auth.change_password') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-key me-1"></i> Change Password
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

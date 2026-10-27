@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted mb-0">Upload PDF or TXT write-ups for supervisor review.</p>
+    <a href="{{ url_for('student.submit_writeup') }}" class="btn btn-primary">
+        <i class="bi bi-cloud-upload me-1"></i> New Submission
+    </a>
+</div>
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>File</th>
+                    <th>Version</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in submissions %}
+                <tr>
+                    <td>{{ s.title }}</td>
+                    <td>
+                        <span class="badge bg-light text-dark">{{ s.file_type|upper }}</span>
+                        <small class="text-muted">{{ s.original_filename }}</small>
+                    </td>
+                    <td>v{{ s.version }}</td>
+                    <td><span class="badge bg-{{ s.status_badge() }}">{{ s.status.replace('_',' ') }}</span></td>
+                    <td>{{ s.submitted_at.strftime('%d %b %Y %H:%M') }}</td>
+                    <td>
+                        <a href="{{ url_for('student.submission_detail', submission_id=s.id) }}"
+                           class="btn btn-sm btn-outline-primary">Details</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted py-4">No submissions yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

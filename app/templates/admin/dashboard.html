@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary"><i class="bi bi-mortarboard"></i></div>
+            <div class="stat-value">{{ stats.total_students }}</div>
+            <div class="stat-label">Students</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-info"><i class="bi bi-person-badge"></i></div>
+            <div class="stat-value">{{ stats.total_supervisors }}</div>
+            <div class="stat-label">Supervisors</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning"><i class="bi bi-person-x"></i></div>
+            <div class="stat-value">{{ stats.unassigned_students }}</div>
+            <div class="stat-label">Unassigned Students</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-success"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="stat-value">{{ stats.pending_submissions }}</div>
+            <div class="stat-label">Pending Submissions</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Recent Users</span>
+                <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-primary">Manage Users</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr><th>Name</th><th>Role</th><th>Identifier</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td>{{ u.full_name }}</td>
+                            <td><span class="badge bg-secondary">{{ u.role }}</span></td>
+                            <td>{% if u.matric_number %}<code>{{ u.matric_number }}</code>{% else %}{{ u.email }}{% endif %}</td>
+                            <td>{% if u.is_active %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-danger">Inactive</span>{% endif %}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">No users yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">Quick Actions</div>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('admin.create_user') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person-plus me-2"></i> Create User
+                </a>
+                <a href="{{ url_for('admin.assignments') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person-check me-2"></i> Assign Students to Supervisors
+                </a>
+                <a href="{{ url_for('admin.create_project') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-folder-plus me-2"></i> Create Project
+                </a>
+                <a href="{{ url_for('admin.submissions') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-files me-2"></i> View All Submissions
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

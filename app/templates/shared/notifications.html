@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-bell me-2"></i>Notifications</span>
+    </div>
+    <div class="list-group list-group-flush">
+        {% if notifications %}
+        {% for n in notifications %}
+        <div class="list-group-item {% if not n.is_read %}list-group-item-light{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                    {% if n.notification_type == 'success' %}<i class="bi bi-check-circle text-success me-1"></i>
+                    {% elif n.notification_type == 'warning' %}<i class="bi bi-exclamation-triangle text-warning me-1"></i>
+                    {% elif n.notification_type == 'danger' %}<i class="bi bi-x-circle text-danger me-1"></i>
+                    {% else %}<i class="bi bi-info-circle text-primary me-1"></i>{% endif %}
+                    {{ n.title }}
+                </h6>
+                <small class="text-muted">{{ n.created_at.strftime('%d %b %Y %H:%M') }}</small>
+            </div>
+            <p class="mb-1 text-muted">{{ n.message }}</p>
+            {% if n.link %}
+            <a href="{{ n.link }}" class="small">View details →</a>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-bell-slash"></i>
+            <p>No notifications yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

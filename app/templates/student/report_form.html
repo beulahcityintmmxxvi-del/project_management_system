@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">Submit Progress Report — {{ project.title }}</div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Report Title *</label>
+                        {{ form.title(class="form-control", placeholder="e.g. Week 5 Progress Update") }}
+                        {% for e in form.title.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Week Number</label>
+                            {{ form.week_number(class="form-control") }}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Progress Claimed (%)</label>
+                            {{ form.progress_claimed(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Progress Details *</label>
+                        {{ form.content(class="form-control", rows=8, placeholder="Describe what you have accomplished, challenges faced, and next steps...") }}
+                        {% for e in form.content.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Attachment (optional)</label>
+                        {{ form.attachment(class="form-control") }}
+                        <small class="text-muted">PDF, DOC, PPT, images, ZIP (max 16 MB)</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Submit Report</button>
+                        <a href="{{ url_for('student.project_detail', project_id=project.id) }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

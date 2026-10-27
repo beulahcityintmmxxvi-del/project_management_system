@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-start mb-3 gap-2">
+    <div>
+        <span class="badge bg-{{ project.get_status_badge() }}">{{ project.status }}</span>
+        <h4 class="mt-1 mb-0">{{ project.title }}</h4>
+        <p class="text-muted mb-0">{{ project.code }} · Supervisor: {{ project.supervisor.full_name if project.supervisor else '—' }}</p>
+    </div>
+    <a href="{{ url_for('student.submit_report', project_id=project.id) }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Submit Report
+    </a>
+</div>
+
+{% if prediction %}
+<div class="prediction-card risk-{{ prediction.risk_level }} mb-4">
+    <div class="d-flex justify-content-between">
+        <div>
+            <strong>Predicted Performance</strong>
+            <p class="mb-0 small text-muted">{{ prediction.recommendation }}</p>
+        </div>
+        <div class="text-end">
+            <span class="prediction-score" style="font-size:1.75rem;">{{ prediction.predicted_score }}%</span>
+            <br><span class="badge risk-{{ prediction.risk_level }}">{{ prediction.risk_level|upper }}</span>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">Progress</div>
+            <div class="card-body text-center">
+                <div class="display-4 fw-bold text-primary">{{ project.progress_percentage }}%</div>
+                <div class="progress mt-2" style="height:10px;">
+                    <div class="progress-bar" style="width:{{ project.progress_percentage }}%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">Milestones</div>
+            <ul class="list-group list-group-flush">
+                {% for m in milestones %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="small">{{ m.title }}</strong>
+                        {% if m.due_date %}<br><small class="text-muted">Due {{ m.due_date.strftime('%d %b %Y') }}</small>{% endif %}
+                    </div>
+                    <span class="badge bg-{% if m.status=='completed' %}success{% elif m.status=='overdue' %}danger{% else %}secondary{% endif %}">{{ m.status }}</span>
+                </li>
+                {% else %}
+                <li class="list-group-item text-muted text-center">No milestones set.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header">Progress Reports</div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Week</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reports %}
+                        <tr>
+                            <td>{{ r.title }}</td>
+                            <td>{{ r.week_number or '—' }}</td>
+                            <td><span class="badge bg-secondary">{{ r.status }}</span></td>
+                            <td>{{ r.submitted_at.strftime('%d %b %Y') }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-3">No reports yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">Feedback</div>
+            <div class="list-group list-group-flush">
+                {% for f in feedbacks %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <strong class="small">{{ f.author.full_name }}</strong>
+                        <small class="text-muted">{{ f.created_at.strftime('%d %b %Y') }}</small>
+                    </div>
+                    <p class="mb-0 mt-1">{{ f.content }}</p>
+                    {% if f.rating %}<small class="text-warning">{% for i in range(f.rating) %}★{% endfor %}</small>{% endif %}
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted text-center">No feedback yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if grades %}
+        <div class="card">
+            <div class="card-header">Grades</div>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr><th>Component</th><th>Score</th><th>Comments</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for g in grades %}
+                        <tr>
+                            <td>{{ g.component|title }}</td>
+                            <td><strong>{{ g.score }}/{{ g.max_score }}</strong> ({{ g.percentage() }}%)</td>
+                            <td class="small text-muted">{{ g.comments or '—' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

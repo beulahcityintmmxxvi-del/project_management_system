@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('supervisor.submissions') }}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to Submissions
+    </a>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-5">
+        <div class="card mb-3">
+            <div class="card-header">Submission</div>
+            <div class="card-body">
+                <h5>{{ submission.title }}</h5>
+                <p class="text-muted small">
+                    By <strong>{{ student.full_name }}</strong>
+                    ({{ student.matric_number or student.email }})
+                    · v{{ submission.version }}
+                </p>
+                <table class="table table-borderless table-sm">
+                    <tr>
+                        <th class="text-muted" style="width:40%">Status</th>
+                        <td><span class="badge bg-{{ submission.status_badge() }}">{{ submission.status.replace('_',' ') }}</span></td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">File</th>
+                        <td>{{ submission.original_filename }} ({{ submission.file_type|upper }})</td>
+                    </tr>
+                    <tr>
+                        <th class="text-muted">Submitted</th>
+                        <td>{{ submission.submitted_at.strftime('%d %b %Y %H:%M') }}</td>
+                    </tr>
+                </table>
+                {% if submission.description %}
+                <p class="small border-top pt-2">{{ submission.description }}</p>
+                {% endif %}
+                <a href="{{ url_for('supervisor.download_submission', submission_id=submission.id) }}"
+                   class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-download me-1"></i> Download File
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Give Review / Approval</div>
+            <div class="card-body">
+                <form method="POST" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Decision *</label>
+                        {{ form.decision(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comments / Feedback *</label>
+                        {{ form.comments(class="form-control", rows=5, placeholder="Provide constructive feedback...") }}
+                        {% for e in form.comments.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rating (optional)</label>
+                        {{ form.rating(class="form-select") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">Previous Reviews</div>
+            <div class="list-group list-group-flush">
+                {% for r in reviews %}
+                <div class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ r.reviewer.full_name }}</strong>
+                            <span class="badge bg-{{ r.decision_badge() }} ms-1">{{ r.decision.replace('_',' ') }}</span>
+                            {% if r.rating %}<span class="text-warning ms-1">{% for i in range(r.rating) %}★{% endfor %}</span>{% endif %}
+                        </div>
+                        <small class="text-muted">{{ r.created_at.strftime('%d %b %Y %H:%M') }}</small>
+                    </div>
+                    <p class="mb-0 mt-2" style="white-space:pre-wrap;">{{ r.comments }}</p>
+                </div>
+                {% else %}
+                <div class="list-group-item text-muted text-center py-4">No reviews yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

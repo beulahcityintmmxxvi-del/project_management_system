@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block auth_content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <div class="logo"><i class="bi bi-kanban-fill"></i></div>
+            <h1>PSMS</h1>
+            <p>Project Supervision & Monitoring System</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show py-2" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.login') }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                <label class="form-label">Matric Number / Email</label>
+                {{ form.identifier(class="form-control form-control-lg", placeholder="e.g. 2460141001 or admin@psms.local") }}
+                {% for error in form.identifier.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                {{ form.password(class="form-control form-control-lg", placeholder="Enter your password") }}
+                {% for error in form.password.errors %}
+                <div class="text-danger small mt-1">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="mb-4 form-check">
+                {{ form.remember(class="form-check-input") }}
+                <label class="form-check-label" for="remember">Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </button>
+        </form>
+
+        <div class="mt-4 text-center text-muted small">
+            <p class="mb-0">Students: use your 10-digit matric number</p>
+            <p class="mb-0">Default student password: <code>Student@123</code></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

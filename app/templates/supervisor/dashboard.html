@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-primary"><i class="bi bi-mortarboard"></i></div>
+            <div class="stat-value">{{ stats.students }}</div>
+            <div class="stat-label">Assigned Students</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-info"><i class="bi bi-folder2"></i></div>
+            <div class="stat-value">{{ stats.projects }}</div>
+            <div class="stat-label">Projects</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-warning"><i class="bi bi-hourglass-split"></i></div>
+            <div class="stat-value">{{ stats.pending_reviews }}</div>
+            <div class="stat-label">Pending Reviews</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-success"><i class="bi bi-check-circle"></i></div>
+            <div class="stat-value">{{ stats.approved }}</div>
+            <div class="stat-label">Approved Submissions</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>Submissions Awaiting Review</span>
+                <a href="{{ url_for('supervisor.submissions') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for s in pending %}
+                <a href="{{ url_for('supervisor.submission_detail', submission_id=s.id) }}"
+                   class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ s.title }}</strong>
+                            <br><small class="text-muted">{{ s.student.full_name }} · {{ s.file_type|upper }}</small>
+                        </div>
+                        <small class="text-muted">{{ s.submitted_at.strftime('%d %b') }}</small>
+                    </div>
+                </a>
+                {% else %}
+                <div class="list-group-item text-muted text-center py-4">No pending submissions.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <span>My Students</span>
+                <a href="{{ url_for('supervisor.students') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for s in students[:8] %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <div>
+                        <strong class="small">{{ s.full_name }}</strong>
+                        <br><small class="text-muted">{{ s.matric_number or s.email }}</small>
+                    </div>
+                    <a href="{{ url_for('supervisor.student_detail', student_id=s.id) }}"
+                       class="btn btn-sm btn-outline-secondary">View</a>
+                </li>
+                {% else %}
+                <li class="list-group-item text-muted text-center py-4">
+                    No students assigned yet. Admin will assign students to you.
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

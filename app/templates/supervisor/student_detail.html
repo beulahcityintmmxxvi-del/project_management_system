@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="mb-3">
+    <a href="{{ url_for('supervisor.students') }}" class="text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back to Students
+    </a>
+</div>
+<div class="card mb-3">
+    <div class="card-body">
+        <h4 class="mb-1">{{ student.full_name }}</h4>
+        <p class="text-muted mb-0">
+            <code>{{ student.matric_number or '—' }}</code> · {{ student.email }}
+            {% if student.department %} · {{ student.department }}{% endif %}
+        </p>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">Submissions</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in submissions %}
+                <tr>
+                    <td>{{ s.title }} <small class="text-muted">v{{ s.version }}</small></td>
+                    <td>{{ s.file_type|upper }}</td>
+                    <td><span class="badge bg-{{ s.status_badge() }}">{{ s.status.replace('_',' ') }}</span></td>
+                    <td>{{ s.submitted_at.strftime('%d %b %Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('supervisor.submission_detail', submission_id=s.id) }}"
+                           class="btn btn-sm btn-primary">
+                            {% if s.status in ['pending','under_review'] %}Review{% else %}View{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted py-4">No submissions from this student.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

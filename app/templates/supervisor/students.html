@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <div class="card-header">Students Assigned to You</div>
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Matric Number</th>
+                    <th>Department</th>
+                    <th>Submissions</th>
+                    <th>Pending</th>
+                    <th>Approved</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in students %}
+                <tr>
+                    <td><strong>{{ item.user.full_name }}</strong></td>
+                    <td><code>{{ item.user.matric_number or '—' }}</code></td>
+                    <td>{{ item.user.department or '—' }}</td>
+                    <td>{{ item.total }}</td>
+                    <td>
+                        {% if item.pending %}
+                        <span class="badge bg-warning">{{ item.pending }}</span>
+                        {% else %}0{% endif %}
+                    </td>
+                    <td>{{ item.approved }}</td>
+                    <td>
+                        <a href="{{ url_for('supervisor.student_detail', student_id=item.user.id) }}"
+                           class="btn btn-sm btn-outline-primary">Open</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        No students assigned. Contact the administrator.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

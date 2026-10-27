@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-cloud-upload me-2"></i>Submit Write-up (PDF or TXT)
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        <label class="form-label">Title *</label>
+                        {{ form.title(class="form-control", placeholder="e.g. Chapter 1 Draft / Literature Review") }}
+                        {% for e in form.title.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Related Project (optional)</label>
+                        {{ form.project_id(class="form-select") }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description / Notes</label>
+                        {{ form.description(class="form-control", rows=3, placeholder="Brief note about this submission...") }}
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Write-up File (PDF or TXT) *</label>
+                        {{ form.document(class="form-control") }}
+                        {% for e in form.document.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+                        <small class="text-muted">Accepted formats: .pdf, .txt (max 16 MB)</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Submit for Review</button>
+                        <a href="{{ url_for('student.submissions') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
